@@ -21,18 +21,13 @@ Copy the github directory then the requirements.txt
 
 ## Utilisation
 
-Appelez l'API en précisant les chemiers locals des fichiers que vous voulez traitez avec le bon url d'endpoint juste aprés avoir lancée le serveur avec gunicorn exemple : 
-gunicorn -w 4 app:app
-curl -X POST -F "audio=path_of_audio"  http://127.0.0.1:8000/api/audio/generate_signature
+Appelez l'API en précisant les chemiers locals des fichiers que vous voulez traitez avec le bon url d'endpoint juste aprés avoir lancée le serveur avec gunicorn 
 
-Call the API, specifying the locals of the files you want to process with the correct endpoint url, just after launching the server with gunicorn example:
-gunicorn -w 4 app:app
-curl -X POST -F "audio=path_of_audio"  http://127.0.0.1:8000/api/audio/generate_signature
+
+Call the API, specifying the locals of the files you want to process with the correct endpoint url, just after launching the server with gunicorn 
+
 
 Вызовите API, указав локали файлов, которые вы хотите обработать, с правильным url конечной точки сразу после запуска сервера с помощью примера gunicorn:
-gunicorn -w 4 app:app
-curl -X POST -F "audio=path_of_audio"  http://127.0.0.1:8000/api/audio/generate_signature
+
 
 使用 gunicorn 示例启动服务器后，使用正确的端点 url 指定要处理的文件的本地地址，从而调用 API：
-gunicorn -w 4 app:app
-curl -X POST -F "audio=path_of_audio"  http://127.0.0.1:8000/api/audio/generate_signature
