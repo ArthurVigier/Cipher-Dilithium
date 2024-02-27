@@ -1,0 +1,12 @@
+entrypoint: gunicorn -b :$PORT main:app
+runtime: python39
+service: default
+env: flex
+instance_class: F2
+automatic_scaling:
+  min_instances: 1
+  max_instances: 10
+  cool_down_period: 120s
+  cpu_utilization:
+    target_utilization: 0.5
+
