@@ -1,9 +1,9 @@
 # app.py
 from flask import Flask
 from flask_cors import CORS
-from audio_python_api import audio_api
-from image_api import image_api
-from video_api import video_api
+from apis.audio_python_api import audio_api
+from apis.image_api import image_api
+from apis.video_api import video_api
 
 
 app = Flask(__name__)

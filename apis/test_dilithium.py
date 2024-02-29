@@ -1,6 +1,6 @@
 import unittest
 import pickle
-from dilithium import Dilithium
+from API_DIRECTORY.dilithium import Dilithium
 
 class TestDilithium(unittest.TestCase):
     def setUp(self):

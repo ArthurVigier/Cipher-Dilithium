@@ -6,6 +6,8 @@ import uuid
 import ast
 import json
 from datetime import datetime
+import sys
+sys.path.append('API_DIRECTORY')  # ajoute le répertoire parent au chemin de recherche
 from dilithium import Dilithium
 import zipfile
 import pickle

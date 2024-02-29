@@ -35,4 +35,4 @@ curl -X POST -F "audio=path_of_audio"  http://127.0.0.1:8000/api/audio/generate_
 
 使用 gunicorn 示例启动服务器后，使用正确的端点 url 指定要处理的文件的本地地址，从而调用 API：
 gunicorn -w 4 app:app
-curl -X POST -F "audio=path_of_audio"  http://127.0.0.1:8000/api/audio/generate_signature
+curl -X POST -F "audio=path_of_audio"  http://127.0.0.1:8000/api/audio/generate_signaturegit commit -m "Initial commit"

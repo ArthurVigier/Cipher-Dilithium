@@ -6,7 +6,7 @@ import uuid
 import ast
 import json
 from datetime import datetime
-from dilithium import Dilithium
+from API_DIRECTORY.dilithium import Dilithium
 import zipfile
 from PyPDF2 import PdfReader
 from docx import Document
