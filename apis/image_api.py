@@ -126,6 +126,9 @@ def generate_signature_from_image_route():
     if 'image' not in request.files:
         return "No image file provided", 400
 
+    # Get the directory from the request parameters
+    directory = request.args.get('directory', '')
+
     image_files = request.files.getlist('image')
 
     output_data = []
@@ -150,6 +153,10 @@ def generate_signature_from_image_route():
         # Get the file name from the image file and replace the extension with .zip
         file_name, _ = os.path.splitext(image_file.filename)
         file_name += '.zip'
+
+        # If a directory was provided, prepend it to the file name
+        if directory:
+            file_name = os.path.join(directory, file_name)
 
         # Write the data to a zip file
         with zipfile.ZipFile(file_name, 'w') as zipf:

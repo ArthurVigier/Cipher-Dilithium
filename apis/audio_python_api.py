@@ -122,6 +122,9 @@ def generate_signature_from_audio_route():
     # Check if an audio file was provided
     if 'audio' not in request.files:
         return "No audio file provided", 400
+    
+    # Get the directory from the request parameters
+    directory = request.args.get('directory', '')
 
     audio_files = request.files.getlist('audio')
 
@@ -149,6 +152,10 @@ def generate_signature_from_audio_route():
         # Get the file name from the audio file and replace the extension with .zip
         file_name, _ = os.path.splitext(audio_file.filename)
         file_name += '.zip'
+
+        # If a directory was provided, prepend it to the file name
+        if directory:
+            file_name = os.path.join(directory, file_name)
 
         # Write the data to a zip file
         with zipfile.ZipFile(file_name, 'w') as zipf:

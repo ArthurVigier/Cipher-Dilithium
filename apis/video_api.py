@@ -119,6 +119,9 @@ def generate_signature_from_video_route():
     # Check if a video file was provided
     if 'video' not in request.files:
         return "No video file provided", 400
+    
+    # Get the directory from the request parameters
+    directory = request.args.get('directory', '')
 
     video_files = request.files.getlist('video')
 
@@ -144,6 +147,10 @@ def generate_signature_from_video_route():
         # Get the file name from the video file and replace the extension with .zip
         file_name, _ = os.path.splitext(video_file.filename)
         file_name += '.zip'
+
+        # If a directory was provided, prepend it to the file name
+        if directory:
+            file_name = os.path.join(directory, file_name)
 
         # Write the data to a zip file
         with zipfile.ZipFile(file_name, 'w') as zipf:
