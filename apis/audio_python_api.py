@@ -7,12 +7,18 @@ import ast
 import json
 from datetime import datetime
 import sys
+from flask import send_file
 sys.path.append('API_DIRECTORY')  # ajoute le répertoire parent au chemin de recherche
 from dilithium import Dilithium
 import zipfile
 import pickle
 import logging
+import redis
+
 app = Flask(__name__)
+
+# Create a Redis connection
+r = redis.Redis(host='localhost', port=6379, db=0)
 
 # Durée de l'enregistrement en secondes
 RECORD_SECONDS = 5
@@ -117,6 +123,8 @@ def generate_signature_route():
 
 
 
+import uuid
+
 @audio_api.route('/generate_signature_from_audio', methods=['POST'])
 def generate_signature_from_audio_route():
     # Check if an audio file was provided
@@ -128,7 +136,7 @@ def generate_signature_from_audio_route():
 
     audio_files = request.files.getlist('audio')
 
-    output_data = []
+    file_ids = []
 
     for audio_file in audio_files:
         # Read the audio file data
@@ -136,8 +144,6 @@ def generate_signature_from_audio_route():
 
         # Use the audio data as the message for generate_signature
         pq_signature, ecc_signature, pq_public_key, ecc_public_key = generate_signature(audio_data)
-
-       
 
         # Prepare the data to be written to the file
         data = {
@@ -173,13 +179,35 @@ def generate_signature_from_audio_route():
                     value = str(value).encode('utf-8')
                     zipf.writestr(f'{key}.bin', value)
 
-        # Print the file path
-        print(f'File saved at: {file_name}')
+        file_id = str(uuid.uuid4())
+        file_ids.append(file_id)
 
-        output_data.append(data)
-    return jsonify({"generate_signature": "success", "file_path": file_name})
+        # Read the file data
+        with open(file_name, 'rb') as f:
+            file_data = f.read()
 
+        # Store the file data in Redis
+        r.set(file_id, file_data)
 
+        # Delete the file from disk
+        os.remove(file_name)
+
+    # Return the file IDs as a response
+    return jsonify({"generate_signature": "success", "file_ids": file_ids})
+
+@audio_api.route('/download_file/<file_id>', methods=['GET'])
+def download_file(file_id):
+    # Get the file data from Redis
+    file_data = r.get(file_id)
+
+    if file_data is None:
+        return "File not found", 404
+
+    # Create a BytesIO object from the file data
+    file_obj = io.BytesIO(file_data)
+
+    # Return the file as a response
+    return send_file(file_obj, mimetype='application/zip', as_attachment=True, download_name=f'{file_id}.zip')
 
 @audio_api.route('/verify_signature', methods=['POST'])
 def verify_signature_route():
