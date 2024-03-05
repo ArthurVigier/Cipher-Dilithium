@@ -17,7 +17,7 @@ def process(media, media_file):
     response = requests.post(url, files=files, data=data)
     response_json = response.json()  # Parse the JSON response
 
-    formatted_response = f"File Path: {response_json['file_path']}\nGenerate Signature: {response_json['generate_signature']}"
+    formatted_response = f"File Ids: {response_json['file_ids']}\nGenerate Signature: {response_json['generate_signature']}"
     return formatted_response
 
 def verify(media, zip_file, media_file):

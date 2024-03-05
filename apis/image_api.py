@@ -18,7 +18,7 @@ import logging
 app = Flask(__name__)
 
 # Create a Redis connection
-r = redis.Redis(host='localhost', port=6379, db=0)
+r = redis.Redis(host='localhost', port=8000, db=0)
 
 if __name__ != "__main__":
     gunicorn_logger = logging.getLogger('gunicorn.error')
