@@ -17,8 +17,12 @@ import redis
 
 app = Flask(__name__)
 
-# Create a Redis connection
-r = redis.Redis(host='localhost', port=8000, db=0)
+r = redis.Redis(
+  host='eu1-crack-hermit-39802.upstash.io',
+  port=39802,
+  password='f65acb30471d4b53918244532c439d6a',
+  ssl=True
+)
 
 # Durée de l'enregistrement en secondes
 RECORD_SECONDS = 5
@@ -186,8 +190,16 @@ def generate_signature_from_audio_route():
         with open(file_name, 'rb') as f:
             file_data = f.read()
 
-        # Store the file data in Redis
-        r.set(file_id, file_data)
+        # Calculate the number of chunks needed
+        num_chunks = len(file_data) // (1048576 - 100) + 1
+
+        # Split the file data into chunks and store each one in Redis
+        for i in range(num_chunks):
+            chunk = file_data[i*(1048576 - 100):(i+1)*(1048576 - 100)]
+            r.set(f"{file_id}_{i}", chunk)
+
+        # Store the number of chunks in Redis
+        r.set(f"{file_id}_num_chunks", num_chunks)
 
         # Delete the file from disk
         os.remove(file_name)
@@ -197,11 +209,21 @@ def generate_signature_from_audio_route():
 
 @audio_api.route('/download_file/<file_id>', methods=['GET'])
 def download_file(file_id):
-    # Get the file data from Redis
-    file_data = r.get(file_id)
+    # Get the number of chunks from Redis
+    num_chunks = int(r.get(f"{file_id}_num_chunks"))
+
+    # Get each chunk from Redis and combine them
+    file_data = b"".join(r.get(f"{file_id}_{i}") for i in range(num_chunks))
 
     if file_data is None:
         return "File not found", 404
+
+    # Delete the chunks from Redis
+    for i in range(num_chunks):
+        r.delete(f"{file_id}_{i}")
+
+    # Delete the num_chunks key from Redis
+    r.delete(f"{file_id}_num_chunks")
 
     # Create a BytesIO object from the file data
     file_obj = io.BytesIO(file_data)
