@@ -90,4 +90,3 @@ Werkzeug==3.0.1
 yarl==1.9.4
 redis==3.5.3
 upstash_redis==1.0.0
-```
